@@ -19,7 +19,7 @@ def get_db_connection():
 def init_database():
     """Initialize the database with required tables."""
     conn = get_db_connection()
-    
+
     # Create books table
     conn.execute('''
         CREATE TABLE IF NOT EXISTS books (
