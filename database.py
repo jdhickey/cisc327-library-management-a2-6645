@@ -20,6 +20,9 @@ def init_database():
     """Initialize the database with required tables."""
     conn = get_db_connection()
 
+    #conn.execute('''DROP TABLE books''')
+    #conn.execute('''DROP TABLE borrow_records''')
+
     # Create books table
     conn.execute('''
         CREATE TABLE IF NOT EXISTS books (
