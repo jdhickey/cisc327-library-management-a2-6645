@@ -45,8 +45,8 @@ def test_get_all_2():
             assert 0 <= b['available_copies'] <= b['total_copies']
 
 def test_get_all_3():
-    books = get_all_books('id')
     add_book_to_catalog("New Book", "New Author", "1234567891111", 6)
+    books = get_all_books('id')
 
     target = books[-1]
     book_id = target['id']
@@ -62,7 +62,7 @@ def test_get_all_3():
 
 
 def test_borrow_1():
-    success, message = borrow_book_by_patron("000000", 4)
+    success, message = borrow_book_by_patron("000000", 1)
     assert success == True
     assert "successfully" in message.lower()
 
@@ -92,7 +92,8 @@ def test_return_2():
     assert "not borrowed" in message.lower()
 
 def test_return_3():
-    success, message = return_book_by_patron("000000", 4)
+    borrow_book_by_patron("000000", 1)
+    success, message = return_book_by_patron("000000", 1)
     assert success == True
     assert "successfully" in message.lower()
 
@@ -124,9 +125,13 @@ def test_fees_3():
     Since book is both borrowed and returned in these unit tests, it should
     not be overdue.
     """
-    result = calculate_late_fee_for_book("000000", 4)
+    borrow_book_by_patron("000000", 1)
+
+    result = calculate_late_fee_for_book("000000", 1)
     assert result['fee_amount'] == 0
     assert result['days_overdue'] == 0
+
+    return_book_by_patron("000000", 1)
 
 def test_fees_4():
     """
