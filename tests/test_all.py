@@ -91,7 +91,7 @@ def test_borrow_3(fresh_db):
 def test_borrow_4(fresh_db):
     success, message = borrow_book_by_patron("000000", 0)
     assert success == False
-    assert "not available" in message.lower()
+    assert "not exist" in message.lower()
 
 def test_return_1(fresh_db):
     success, message = return_book_by_patron("111", 4)
