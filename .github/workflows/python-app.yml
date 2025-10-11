@@ -25,6 +25,10 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install pytest
 
+    - name: Initialize database
+      run: |
+        python -c "from database.py import init_database; init_database()"
+
     - name: Run tests
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)
