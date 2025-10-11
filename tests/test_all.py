@@ -63,8 +63,9 @@ def test_get_all_3():
 
 
 def test_borrow_1():
-    book_id = get_book_by_isbn("9780743273565")['id']
-    success, message = borrow_book_by_patron("000000", book_id)
+    book = get_book_by_isbn("9780743273565")
+    assert book is not None, "Book not found in DB!"
+    success, message = borrow_book_by_patron("000000", book['id'])
     assert success == True
     assert "successfully" in message.lower()
 
