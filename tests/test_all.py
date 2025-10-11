@@ -2,42 +2,32 @@ import pytest
 from library_service import *
 from database import *
 
-@pytest.fixture
-def fresh_db():
-    conn = get_db_connection()
-    conn.execute('''DROP TABLE books''')
-    conn.execute('''DROP TABLE borrow_records''')
-    conn.close()
-
-    init_database()
-    yield
-
-def test_add_1(fresh_db):
+def test_add_1():
     success, message = add_book_to_catalog("Test Book", "Test Author", "1234567890123", 5)
     assert success == True
     assert "successfully added" in message.lower()
 
-def test_add_2(fresh_db):
+def test_add_2():
     success, message = add_book_to_catalog("", "Test Author","1234567890124", 5)
     assert success == False
     assert "title is required" in message.lower()
 
-def test_add_3(fresh_db):
+def test_add_3():
     success, message = add_book_to_catalog("Testing Book", "", "1234567890125",5)
     assert success == False
     assert "author is required" in message.lower()
 
-def test_add_4(fresh_db):
+def test_add_4():
     success, message = add_book_to_catalog("Testing Book", "Testing Author", "0",5)
     assert success == False
     assert "isbn must" in message.lower()
 
-def test_add_5(fresh_db):
+def test_add_5():
     success, message = add_book_to_catalog("Testing a Book", "Testing A. Author","1234567890126", -1)
     assert success == False
     assert "total copies must" in message.lower()
 
-def test_get_all_1(fresh_db):
+def test_get_all_1():
     books = get_all_books()
     assert isinstance(books, list)
     if books:
@@ -45,7 +35,7 @@ def test_get_all_1(fresh_db):
         for key in ['id', 'title', 'author', 'isbn', 'available_copies', 'total_copies']:
             assert key in book
 
-def test_get_all_2(fresh_db):
+def test_get_all_2():
     books = get_all_books()
     if books:
         for b in books:
@@ -55,7 +45,7 @@ def test_get_all_2(fresh_db):
             assert len(b['isbn']) == 13 and isinstance(b['isbn'], str)
             assert 0 <= b['available_copies'] <= b['total_copies']
 
-def test_get_all_3(fresh_db):
+def test_get_all_3():
     add_book_to_catalog("New Book", "New Author", "1234567891111", 6)
     books = get_all_books('id')
 
@@ -72,48 +62,48 @@ def test_get_all_3(fresh_db):
     assert final['available_copies'] == initial_available
 
 
-def test_borrow_1(fresh_db):
+def test_borrow_1():
     success, message = borrow_book_by_patron("000000", 1)
     assert success == True
     assert "successfully" in message.lower()
 
-def test_borrow_2(fresh_db):
+def test_borrow_2():
     success, message = borrow_book_by_patron("1", 1)
     assert success == False
     assert "invalid patron" in message.lower()
 
-def test_borrow_3(fresh_db):
+def test_borrow_3():
     success, message = borrow_book_by_patron("000000", 3)
     assert success == False
     assert "not available" in message.lower()
 
-def test_borrow_4(fresh_db):
+def test_borrow_4():
     success, message = borrow_book_by_patron("000000", 0)
     assert success == False
     assert "not available" in message.lower()
 
-def test_return_1(fresh_db):
+def test_return_1():
     success, message = return_book_by_patron("111", 4)
     assert success == False
     assert "invalid patron" in message.lower()
 
-def test_return_2(fresh_db):
+def test_return_2():
     success, message = return_book_by_patron("000000", 3)
     assert success == False
     assert "not borrowed" in message.lower()
 
-def test_return_3(fresh_db):
+def test_return_3():
     borrow_book_by_patron("000000", 1)
     success, message = return_book_by_patron("000000", 1)
     assert success == True
     assert "successfully" in message.lower()
 
-def test_return_4(fresh_db):
+def test_return_4():
     success, message = return_book_by_patron("000000", 304)
     assert success == False
     assert "book not" in message.lower()
 
-def test_fees_1(fresh_db):
+def test_fees_1():
     """
     If patron ID is not 6 digits, the function should still return a dict,
     with fee_amount = 0 and status reflecting invalid patron.
@@ -122,7 +112,7 @@ def test_fees_1(fresh_db):
     assert result['fee_amount'] == 0
     assert "invalid patron" in result['status'].lower()
 
-def test_fees_2(fresh_db):
+def test_fees_2():
     """
     If book ID is not valid the function should still return a dict,
     with fee_amount = 0 and status reflecting invalid ID.
@@ -131,7 +121,7 @@ def test_fees_2(fresh_db):
     assert result['fee_amount'] == 0
     assert "not found" in result['status'].lower()
 
-def test_fees_3(fresh_db):
+def test_fees_3():
     """
     Since book is both borrowed and returned in these unit tests, it should
     not be overdue.
@@ -144,7 +134,7 @@ def test_fees_3(fresh_db):
 
     return_book_by_patron("000000", 1)
 
-def test_fees_4(fresh_db):
+def test_fees_4():
     """
     This book is not available so should never be overdue.
     """
@@ -154,7 +144,7 @@ def test_fees_4(fresh_db):
     assert "no corresponding borrow record" in result['status'].lower()
     assert isinstance(result, dict)
 
-def test_fees_5(monkeypatch, fresh_db):
+def test_fees_5(monkeypatch, ):
     """
     Testing an overdue book
     """
@@ -178,28 +168,28 @@ def test_fees_5(monkeypatch, fresh_db):
 
 
 
-def test_search_1(fresh_db):
+def test_search_1():
     result = search_books_in_catalog("1984", "title")
     assert all(isinstance(book, dict) for book in result)
     assert all("1984" in book['title'] for book in result)
     assert isinstance(result, list)
 
-def test_search_2(fresh_db):
+def test_search_2():
     result = search_books_in_catalog("George", "author")
     assert isinstance(result, list)
 
-def test_search_3(fresh_db):
+def test_search_3():
     result = search_books_in_catalog("9780451524935", "isbn")
     assert len(result) == 1
     assert result[0]['isbn'] == "9780451524935"
     assert isinstance(result, list)
 
-def test_search_4(fresh_db):
+def test_search_4():
     result = search_books_in_catalog("0p", "title")
     assert isinstance(result, list)
     assert result == []
 
-def test_patron_1(fresh_db):
+def test_patron_1():
     expected_keys = [
         "status",
         "patron_id",
@@ -214,16 +204,16 @@ def test_patron_1(fresh_db):
     for key in expected_keys:
         assert key in result
 
-def test_patron_2(fresh_db):
+def test_patron_2():
     result = get_patron_status_report("000111")
     assert isinstance(result, dict)
 
-def test_patron_3(fresh_db):
+def test_patron_3():
     result = get_patron_status_report("000000")
     assert result['patron_id'] == "000000"
     assert isinstance(result, dict)
 
-def test_patron_4(fresh_db):
+def test_patron_4():
     result = get_patron_status_report("gol")
     assert isinstance(result, dict)
     assert "invalid patron" in result['status']
