@@ -41,7 +41,7 @@ def test_get_all_2():
             assert isinstance(b['id'], int)
             assert b['title']
             assert b['author']
-            assert len(b['isbn']) == 13 and isinstance(b['isbn'], int)
+            assert len(b['isbn']) == 13 and isinstance(b['isbn'], str)
             assert 0 <= b['available_copies'] <= b['total_copies']
 
 def test_get_all_3():
