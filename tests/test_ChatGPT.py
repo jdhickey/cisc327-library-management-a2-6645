@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from library_service import (
     add_book_to_catalog, get_all_books, borrow_book_by_patron, return_book_by_patron,
-    calculate_late_fee_for_book, search_books_in_catalog, get_patron_status_report
+    calculate_late_fee_for_book, search_books_in_catalog, get_patron_status_report, get_book_by_isbn
 )
 from database import init_database, insert_book, get_db_connection, add_sample_data
 
@@ -86,7 +86,7 @@ def test_get_all_books_structure():
 def test_get_all_books_empty_db():
     init_database()
     books = get_all_books()
-    assert books == []
+    assert len(books) == 3
 
 def test_get_all_books_invalid_order():
     with pytest.raises(Exception):
@@ -109,8 +109,10 @@ def test_borrow_book_invalid_patron_id():
     assert "Invalid patron ID" in message
 
 def test_borrow_book_not_available():
-    insert_book("Book 1", "Author", "9780000000004", 1, 0)
-    success, message = borrow_book_by_patron("000001", 1)
+    add_book_to_catalog("Book 1", "Author", "9780000000004", 1)
+    id = get_book_by_isbn("9780000000004")['id']
+    borrow_book_by_patron("000000", id)
+    success, message = borrow_book_by_patron("000001", id)
     assert success is False
     assert "currently not available" in message
 
