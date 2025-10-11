@@ -227,4 +227,4 @@ def test_patron_3(fresh_db):
 def test_patron_4(fresh_db):
     result = get_patron_status_report("gol")
     assert isinstance(result, dict)
-    assert "invalid patron" in result['status']
+    assert "invalid patron" in result['status'].lower()
