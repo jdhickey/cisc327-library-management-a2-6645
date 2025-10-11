@@ -7,6 +7,8 @@ from library_service import (
 )
 from database import init_database, insert_book, update_book_availability
 
+# Tests written by ChatGPT for comparison purposes
+
 # ------------------------
 # Test Setup Fixture
 # ------------------------
