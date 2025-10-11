@@ -16,12 +16,13 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row  # This enables column access by name
     return conn
 
-def init_database():
+def init_database(reset=False):
     """Initialize the database with required tables."""
     conn = get_db_connection()
 
-    #conn.execute('''DROP TABLE books''')
-    #conn.execute('''DROP TABLE borrow_records''')
+    if reset:
+        conn.execute('''DROP TABLE books''')
+        conn.execute('''DROP TABLE borrow_records''')
 
     # Create books table
     conn.execute('''

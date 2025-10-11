@@ -27,7 +27,7 @@ jobs:
 
     - name: Initialize database
       run: |
-        python -c "from database import init_database; init_database()"
+        python -c "from database import init_database; init_database(reset=True)"
 
     - name: Run tests
       run: |
