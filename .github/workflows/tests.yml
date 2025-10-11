@@ -36,6 +36,6 @@ jobs:
         pytest -v --maxfail=1 --disable-warnings --rootdir=. --cov=library_service --cov-report=xml
 
     - name: Upload coverage
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         files: coverage.xml
