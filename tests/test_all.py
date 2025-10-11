@@ -79,7 +79,7 @@ def test_borrow_3():
 def test_borrow_4():
     success, message = borrow_book_by_patron("000000", 0)
     assert success == False
-    assert "not found" in message.lower()
+    assert "not available" in message.lower()
 
 def test_return_1():
     success, message = return_book_by_patron("111", 4)

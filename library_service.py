@@ -76,7 +76,7 @@ def borrow_book_by_patron(patron_id: str, book_id: int) -> Tuple[bool, str]:
     # Check if book exists and is available
     book = get_book_by_id(book_id)
     if not book:
-        return False, "Book not found."
+        return False, "This book is currently not available."
     
     if book['available_copies'] <= 0:
         return False, "This book is currently not available."
