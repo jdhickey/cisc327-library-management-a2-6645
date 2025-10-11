@@ -167,10 +167,10 @@ def test_fees_5(monkeypatch, fresh_db):
     due_date_iso = (now - timedelta(days=days_overdue)).isoformat()
     borrow_date_iso = (now - timedelta(days=(days_overdue + 14))).isoformat()
 
-    mock_record = {"patron_id": "000000", "book_id": 4, "borrow_date": borrow_date_iso, "due_date": due_date_iso, "return_date": None}
+    mock_record = {"patron_id": "000000", "book_id": 1, "borrow_date": borrow_date_iso, "due_date": due_date_iso, "return_date": None}
 
     monkeypatch.setattr('library_service.conn_execute_read', lambda q, p=(): mock_record)
-    result = calculate_late_fee_for_book("000000", 4)
+    result = calculate_late_fee_for_book("000000", 1)
     expected_fee = round((7 * 0.50) + (days_overdue - 7) * 1.00, 2)
 
     assert result['days_overdue'] == days_overdue
