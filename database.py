@@ -202,3 +202,9 @@ def update_borrow_record_return_date(patron_id: str, book_id: int, return_date: 
     except Exception as e:
         conn.close()
         return False
+
+def conn_execute_read(query: str, param: tuple = ()):
+    conn = get_db_connection()
+    result = conn.execute(query, param).fetchall()
+    conn.close()
+    return [dict(row) for row in result]
