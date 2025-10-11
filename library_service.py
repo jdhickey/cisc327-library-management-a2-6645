@@ -251,8 +251,18 @@ def get_patron_status_report(patron_id: str) -> Dict:
             "borrowing_history": List[Dict]
         }
     """
+    return_block = {
+        "status": "default",
+        "patron_id": None,
+        "currently_borrowed_count": 0,
+        "currently_borrowed_books": 0,
+        "total_late_fees": 0,
+        "borrowing_history": None
+    }
+
     if not patron_id or not patron_id.isdigit() or len(patron_id) != 6:
-        return {"status": "Invalid patron ID"}
+        return_block['status'] = "Invalid patron ID"
+        return return_block
 
     current = get_patron_borrowed_books(patron_id)
 
@@ -271,13 +281,12 @@ def get_patron_status_report(patron_id: str) -> Dict:
         ORDER BY br.borrow_date DESC
     ''', (patron_id,))
 
-    return {
-        "status": "success",
-        "patron_id": patron_id,
-        "currently_borrowed_count": count,
-        "currently_borrowed_books": current,
-        "total_late_fees": round(total_late_fees, 2),
-        "borrowing_history": history
-    }
+    return_block['status'] = "success"
+    return_block['patron_id'] = patron_id
+    return_block['currently_borrowed_count'] = count
+    return_block['currently_borrowed_books'] = current
+    return_block['total_late_fees'] = round(total_late_fees, 2)
+    return_block['total_late_fees'] = history
 
+    return return_block
 
