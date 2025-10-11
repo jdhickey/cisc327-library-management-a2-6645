@@ -109,7 +109,7 @@ def return_book_by_patron(patron_id: str, book_id: int) -> Tuple[bool, str]:
 
     Args:
         patron_id: 6-digit library card ID
-        book_id: ID of the book to borrow
+        book_id: ID of the book to return
 
     Returns:
         tuple: (success: bool, message: str)
@@ -236,7 +236,20 @@ def get_patron_status_report(patron_id: str) -> Dict:
     """
     Get status report for a patron.
     
-    TODO: Implement R7 as per requirements
+    Implements R7 as per requirements
+
+    Args:
+        patron_id: 6-digit library card ID
+
+    Returns:
+        Dict: {
+            "status": "STATUS",
+            "patron_id": XXXXXX,
+            "currently_borrowed_count": X,
+            "currently_borrowed_books": List[Dict],
+            "total_late_fees": X.XX,
+            "borrowing_history": List[Dict]
+        }
     """
     if not patron_id or not patron_id.isdigit() or len(patron_id) != 6:
         return {"status": "Invalid patron ID"}

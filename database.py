@@ -87,10 +87,10 @@ def add_sample_data():
 
 # Helper Functions for Database Operations
 
-def get_all_books() -> List[Dict]:
+def get_all_books(order_by: str = "title") -> List[Dict]:
     """Get all books from the database."""
     conn = get_db_connection()
-    books = conn.execute('SELECT * FROM books ORDER BY title').fetchall()
+    books = conn.execute(f'SELECT * FROM books ORDER BY {order_by}').fetchall()
     conn.close()
     return [dict(book) for book in books]
 
