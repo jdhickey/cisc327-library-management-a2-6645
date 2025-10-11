@@ -54,7 +54,7 @@ Report your findings in a table with columns function name, implementation statu
 - For each function, write at least 4-5 test cases, including positive and negative test cases
 - Create a separate folder named `tests` and store the test script file there. You may create separate script files for each function
 - Update the `A1_LastName_last4digitID.md` file to include a summary of the tests scripts
-- A sample of test script is given in [`sample_test.py`](tests/n_test_all.py) file  
+- A sample of test script is given in [`sample_test.py`](tests/test_all.py) file  
 
 ### 4. Submission
 - See the submission instructions in OnQ.
