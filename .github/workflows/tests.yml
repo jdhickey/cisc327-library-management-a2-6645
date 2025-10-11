@@ -24,6 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install pytest
+        pip install pytest-cov
 
     - name: Initialize database
       run: |
@@ -32,4 +33,9 @@ jobs:
     - name: Run tests
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)
-        pytest -v --maxfail=1 --disable-warnings --rootdir=.
+        pytest -v --maxfail=1 --disable-warnings --rootdir=. --cov=library_service --cov-report=xml
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v4
+      with:
+        files: coverage.xml
