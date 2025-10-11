@@ -5,7 +5,7 @@ from library_service import (
     add_book_to_catalog, get_all_books, borrow_book_by_patron, return_book_by_patron,
     calculate_late_fee_for_book, search_books_in_catalog, get_patron_status_report
 )
-from database import init_database, insert_book, update_book_availability
+from database import init_database, insert_book, get_db_connection, add_sample_data
 
 # Tests written by ChatGPT for comparison purposes
 
@@ -13,9 +13,15 @@ from database import init_database, insert_book, update_book_availability
 # Test Setup Fixture
 # ------------------------
 @pytest.fixture(autouse=True)
-def setup_db():
-    """Reset database before each test."""
+def fresh_db():
+    conn = get_db_connection()
+    conn.execute('''DROP TABLE books''')
+    conn.execute('''DROP TABLE borrow_records''')
+    conn.close()
+
     init_database()
+    add_sample_data()
+    yield
 
 # ========================
 # R1: Add Book to Catalog
@@ -156,7 +162,7 @@ def test_late_fee_under_7_days(monkeypatch):
     monkeypatch.setattr('library_service.conn_execute_read', lambda q,p=(): [{"borrow_date": borrow_date.isoformat(), "due_date": due_date.isoformat(), "return_date": None}])
     fee_info = calculate_late_fee_for_book("000001", 1)
     assert fee_info['days_overdue'] == 8
-    assert fee_info['fee_amount'] == 4.0  # 7*0.5 + 1*1.0
+    assert fee_info['fee_amount'] == 4.5  # 7*0.5 + 1*1.0
 
 def test_late_fee_over_7_days(monkeypatch):
     borrow_date = datetime.now() - timedelta(days=30)
