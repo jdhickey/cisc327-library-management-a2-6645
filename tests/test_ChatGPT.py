@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime, timedelta
 
-from library_service import (
+from services.library_service import (
     add_book_to_catalog, get_all_books, borrow_book_by_patron, return_book_by_patron,
     calculate_late_fee_for_book, search_books_in_catalog, get_patron_status_report, get_book_by_isbn
 )

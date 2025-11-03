@@ -1,5 +1,5 @@
 import pytest
-from library_service import *
+from services.library_service import *
 from database import *
 
 @pytest.fixture
