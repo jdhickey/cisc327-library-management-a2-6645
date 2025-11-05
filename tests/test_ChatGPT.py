@@ -6,6 +6,7 @@ from services.library_service import (
     calculate_late_fee_for_book, search_books_in_catalog, get_patron_status_report, get_book_by_isbn
 )
 from database import init_database, insert_book, get_db_connection, add_sample_data
+from services.library_service import *
 
 # Tests written by ChatGPT for comparison purposes
 
