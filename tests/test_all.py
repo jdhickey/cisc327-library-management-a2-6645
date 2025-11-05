@@ -38,6 +38,11 @@ def test_add_5(fresh_db):
     assert success == False
     assert "total copies must" in message.lower()
 
+def test_add_6(fresh_db):
+    success, message = add_book_to_catalog("Testing a Book", "ABC" * 100,"1234567890126", -1)
+    assert success == False
+    assert "must be less" in message.lower()
+
 def test_get_all_1(fresh_db):
     books = get_all_books()
     assert isinstance(books, list)
@@ -177,7 +182,27 @@ def test_fees_5(monkeypatch, fresh_db):
     assert result['fee_amount'] == expected_fee
     assert result['status'].lower() == "overdue"
 
+def test_fees_6(monkeypatch, fresh_db):
+    """
+    Testing an overdue book
+    """
 
+    from datetime import datetime, timedelta
+    days_overdue = 6
+
+    now = datetime.now()
+    due_date_iso = (now - timedelta(days=days_overdue)).isoformat()
+    borrow_date_iso = (now - timedelta(days=(days_overdue + 14))).isoformat()
+
+    mock_record = [{"patron_id": "000000", "book_id": 1, "borrow_date": borrow_date_iso, "due_date": due_date_iso, "return_date": None}]
+
+    monkeypatch.setattr('services.library_service.conn_execute_read', lambda q, p=(): mock_record)
+    result = calculate_late_fee_for_book("000000", 1)
+    expected_fee = round((6 * 0.50), 2)
+
+    assert result['days_overdue'] == days_overdue
+    assert result['fee_amount'] == expected_fee
+    assert result['status'].lower() == "overdue"
 
 def test_search_1(fresh_db):
     result = search_books_in_catalog("1984", "title")
