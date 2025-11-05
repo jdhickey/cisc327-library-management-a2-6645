@@ -169,7 +169,7 @@ def test_fees_5(monkeypatch, fresh_db):
 
     mock_record = [{"patron_id": "000000", "book_id": 1, "borrow_date": borrow_date_iso, "due_date": due_date_iso, "return_date": None}]
 
-    monkeypatch.setattr('./services/library_service.conn_execute_read', lambda q, p=(): mock_record)
+    monkeypatch.setattr('services.library_service.conn_execute_read', lambda q, p=(): mock_record)
     result = ls.calculate_late_fee_for_book("000000", 1)
     expected_fee = round((7 * 0.50) + (days_overdue - 7) * 1.00, 2)
 
