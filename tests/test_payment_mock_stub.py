@@ -74,6 +74,17 @@ def test_pay_late_fees_4(fresh_db, mocker, sample_book):
     assert txn is None
     mock_gateway.assert_not_called()
 
+def test_pay_late_fees_5(fresh_db, mocker, sample_book):
+    mocker.patch('services.library_service.calculate_late_fee_for_book', return_value={'fee_amount': 2.5, 'days_overdue': 1, 'status': 'On time'})
+    mocker.patch('services.library_service.get_book_by_id', return_value=sample_book)
+    mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.process_payment.side_effect = Exception("Processing errors")
+
+    success, message, txn = pay_late_fees("111111", 1, payment_gateway=mock_gateway)
+    assert success == False
+    assert "error" in message.lower()
+    mock_gateway.assert_called_once()
+
 def test_refund_late_fee_1(fresh_db, mocker):
     mock_gateway = Mock(spec=PaymentGateway)
     mock_gateway.refund_payment.return_value = (True, "Refund OK")
