@@ -34,6 +34,7 @@ def test_pay_late_fees_1(fresh_db, mocker, sample_book):
     mock_gateway.process_payment.assert_called_with(
         patron_id="111111",
         amount=5.0,
+        description=f"Late fees for '{sample_book['title']}'"
     )
 
 def test_pay_late_fees_2(fresh_db, mocker, sample_book):
@@ -69,6 +70,6 @@ def test_pay_late_fees_4(fresh_db, mocker, sample_book):
 
     success, message, txn = pay_late_fees("111111", 1, payment_gateway=mock_gateway)
     assert success == False
-    assert "invalid" in message.lower()
+    assert "no late fees" in message.lower()
     assert txn is None
     mock_gateway.assert_called_once()
