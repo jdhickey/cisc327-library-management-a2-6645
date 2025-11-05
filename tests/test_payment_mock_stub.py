@@ -72,4 +72,49 @@ def test_pay_late_fees_4(fresh_db, mocker, sample_book):
     assert success == False
     assert "no late fees" in message.lower()
     assert txn is None
-    mock_gateway.assert_called_once()
+    mock_gateway.assert_not_called()
+
+def test_refund_late_fee_1(fresh_db, mocker):
+    mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.refund_payment.return_value = (True, "Refund OK")
+
+    success, message = refund_late_fee_payment("txn_0000", 5.0, payment_gateway=mock_gateway)
+
+    assert success == True
+    assert "refund" in message.lower()
+    mock_gateway.refund_payment.assert_called_once_with("txn_0000", 5.0)
+
+def test_refund_late_fee_2(fresh_db, mocker):
+    mock_gateway = Mock(spec=PaymentGateway)
+
+    success, message = refund_late_fee_payment("BAD", 5.0, payment_gateway=mock_gateway)
+
+    assert success == False
+    assert "invalid" in message.lower()
+    mock_gateway.refund_payment.assert_not_called()
+
+def test_refund_late_fee_3(fresh_db, mocker):
+    mock_gateway = Mock(spec=PaymentGateway)
+    success, message = refund_late_fee_payment("txn_0000", -5.0, payment_gateway=mock_gateway)
+
+    assert success == False
+    assert "greater" in message.lower()
+    mock_gateway.refund_payment.assert_not_called()
+
+def test_refund_late_fee_4(fresh_db, mocker):
+    mock_gateway = Mock(spec=PaymentGateway)
+    success, message = refund_late_fee_payment("txn_0000", 16.0, payment_gateway=mock_gateway)
+
+    assert success == False
+    assert "exceeds" in message.lower()
+    mock_gateway.refund_payment.assert_not_called()
+
+def test_refund_late_fee_5(fresh_db, mocker):
+    mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.refund_payment.side_effect = Exception("Gateway timeout")
+
+    success, message = refund_late_fee_payment("txn_9999", 5.0, payment_gateway=mock_gateway)
+
+    assert success == False
+    assert "processing error" in message.lower()
+    mock_gateway.refund_payment.assert_called_once_with("txn_9999", 5.0)
