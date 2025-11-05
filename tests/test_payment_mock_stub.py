@@ -123,7 +123,6 @@ def test_refund_late_fee_4(fresh_db, mocker):
 def test_refund_late_fee_5(fresh_db, mocker):
     mock_gateway = Mock(spec=PaymentGateway)
     mock_gateway.refund_payment.side_effect = Exception("Gateway timeout")
-    mock_gateway.return_value = None
 
     success, message = refund_late_fee_payment("txn_9999", 5.0, payment_gateway=mock_gateway)
 
