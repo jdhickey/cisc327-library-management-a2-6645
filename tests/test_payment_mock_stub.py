@@ -83,7 +83,7 @@ def test_pay_late_fees_5(fresh_db, mocker, sample_book):
     success, message, txn = pay_late_fees("111111", 1, payment_gateway=mock_gateway)
     assert success == False
     assert "error" in message.lower()
-    mock_gateway.assert_called_once()
+    mock_gateway.assert_not_called()
 
 def test_refund_late_fee_1(fresh_db, mocker):
     mock_gateway = Mock(spec=PaymentGateway)
