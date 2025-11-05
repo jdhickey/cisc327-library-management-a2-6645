@@ -119,7 +119,7 @@ def test_borrow_book_not_available():
 
 def test_borrow_book_limit(monkeypatch):
     insert_book("Book 1", "Author", "9780000000004", 1, 1)
-    monkeypatch.setattr('library_service.get_patron_borrow_count', lambda pid: 6)
+    monkeypatch.setattr('services.library_service.get_patron_borrow_count', lambda pid: 6)
     success, message = borrow_book_by_patron("000001", 1)
     assert success is False
     assert "maximum borrowing limit" in message
@@ -154,7 +154,7 @@ def test_return_book_invalid_patron():
 def test_late_fee_on_time(monkeypatch):
     borrow_date = datetime.now() - timedelta(days=10)
     due_date = borrow_date + timedelta(days=14)
-    monkeypatch.setattr('library_service.conn_execute_read', lambda q,p=(): [{"borrow_date": borrow_date.isoformat(), "due_date": due_date.isoformat(), "return_date": None}])
+    monkeypatch.setattr('services.library_service.conn_execute_read', lambda q,p=(): [{"borrow_date": borrow_date.isoformat(), "due_date": due_date.isoformat(), "return_date": None}])
     fee_info = calculate_late_fee_for_book("000001", 1)
     assert fee_info['days_overdue'] == 0
     assert fee_info['status'] == 'On time'
@@ -162,7 +162,7 @@ def test_late_fee_on_time(monkeypatch):
 def test_late_fee_under_7_days(monkeypatch):
     borrow_date = datetime.now() - timedelta(days=22)
     due_date = borrow_date + timedelta(days=14)
-    monkeypatch.setattr('library_service.conn_execute_read', lambda q,p=(): [{"borrow_date": borrow_date.isoformat(), "due_date": due_date.isoformat(), "return_date": None}])
+    monkeypatch.setattr('services.library_service.conn_execute_read', lambda q,p=(): [{"borrow_date": borrow_date.isoformat(), "due_date": due_date.isoformat(), "return_date": None}])
     fee_info = calculate_late_fee_for_book("000001", 1)
     assert fee_info['days_overdue'] == 8
     assert fee_info['fee_amount'] == 4.5  # 7*0.5 + 1*1.0
@@ -170,7 +170,7 @@ def test_late_fee_under_7_days(monkeypatch):
 def test_late_fee_over_7_days(monkeypatch):
     borrow_date = datetime.now() - timedelta(days=30)
     due_date = borrow_date + timedelta(days=14)
-    monkeypatch.setattr('library_service.conn_execute_read', lambda q,p=(): [{"borrow_date": borrow_date.isoformat(), "due_date": due_date.isoformat(), "return_date": None}])
+    monkeypatch.setattr('services.library_service.conn_execute_read', lambda q,p=(): [{"borrow_date": borrow_date.isoformat(), "due_date": due_date.isoformat(), "return_date": None}])
     fee_info = calculate_late_fee_for_book("000001", 1)
     assert fee_info['fee_amount'] <= 15.0  # respects max cap
 
