@@ -33,7 +33,7 @@ jobs:
     - name: Run tests
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)
-        pytest -v --maxfail=1 --disable-warnings --rootdir=. --cov=library_service --cov-report=xml --maxfail=0
+        pytest -v --maxfail=1 --disable-warnings --rootdir=. --cov=services --cov-report=xml --maxfail=0
 
     - name: Upload coverage
       uses: codecov/codecov-action@v5
